@@ -3,7 +3,6 @@
     <!-- <img alt="Vue logo" src="../assets/logo.png" /> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
     <Navigator />
-    <!-- <ChatRoom /> -->
   </div>
 </template>
 
@@ -16,9 +15,7 @@ import Navigator from "@/components/Navigator";
 export default {
   name: "Home",
   components: {
-    // HelloWorld,
-    Navigator,
-    // ChatRoom,
-  },
+    Navigator
+  }
 };
 </script>
