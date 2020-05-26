@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="notice-area"></div>
-    <div class="msg-list"></div>
+    <MsgList />
     <div class="input-area">
       <div class="action pic">
         <button>
@@ -79,7 +79,12 @@
 
 <script lang="ts">
 import Vue from "vue";
+import MsgList from "@/components/MsgList.vue";
+
 export default Vue.extend({
-  name: "chat-room" as string
+  name: "chat-room" as string,
+  components: {
+    MsgList
+  }
 });
 </script>
