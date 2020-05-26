@@ -19,3 +19,5 @@ new Vue({
 }).$mount("#app");
 
 Vue.component("chatRoom", import("@/components/ChatRoom.vue"));
+Vue.component("msgList", import("@/components/MsgList.vue"));
+Vue.component("msg", import("@/components/Msg.vue"));
