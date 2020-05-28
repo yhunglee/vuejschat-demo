@@ -1,12 +1,49 @@
 <template>
   <div class="container">
     <div class="notice-area"></div>
-    <MsgList />
+    <MsgList
+      v-bind:msgList="[
+        {
+          author: 'hello',
+          authorId: '1',
+          msgId: '1',
+          color: '#f00',
+          createdAt: new Date(),
+          content: 'world2',
+          isMe: true,
+        },
+        {
+          author: 'hello',
+          authorId: '1',
+          msgId: '2',
+          color: '#f00',
+          createdAt: new Date(),
+          content:
+            'worldqwerqwersdfjsadfjweorqjpwoerjqwerqweoreqerasdfasdfasldfkasld;fkas;dlfkjas;ldfkjas;ldfkjasdl;feworuqpwoeirupedfqwreqwerqwerqwerqwerqwerqwerqwer',
+          isMe: true,
+        },
+        {
+          author: 'hello1',
+          authorId: '2',
+          msgId: '3',
+          color: '#bf0',
+          createdAt: new Date(),
+          content: 'world1',
+          isMe: false,
+        },
+      ]"
+    />
     <div class="input-area">
       <div class="action pic">
         <button>
           <label>
-            <input type="file" name="imgFile" id="imgFile" accept="image/*" hidden />
+            <input
+              type="file"
+              name="imgFile"
+              id="imgFile"
+              accept="image/*"
+              hidden
+            />
             <b-icon-image></b-icon-image>
           </label>
         </button>
@@ -21,7 +58,13 @@
       </div>
 
       <div class="txt msg-input">
-        <textarea name="msg" id="inputMsg" cols="30" rows="1" autofocus></textarea>
+        <textarea
+          name="msg"
+          id="inputMsg"
+          cols="30"
+          rows="1"
+          autofocus
+        ></textarea>
       </div>
 
       <div class="action send-msg">
@@ -78,13 +121,20 @@
 </style>
 
 <script lang="ts">
-import Vue from "vue";
+// import Vue from "vue";
+import { Vue, Component } from "vue-property-decorator";
 import MsgList from "@/components/MsgList.vue";
 
-export default Vue.extend({
-  name: "chat-room" as string,
-  components: {
-    MsgList
-  }
-});
+// export default Vue.extend({
+//   name: "chat-room" as string,
+//   components: {
+//     MsgList,
+//   },
+// });
+
+@Component({
+  components: { MsgList },
+  props: [],
+})
+export default class ChatRoom extends Vue {}
 </script>
