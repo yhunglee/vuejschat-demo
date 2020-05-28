@@ -6,12 +6,11 @@
       <b-tab title="偷偷說">
         <ChatRoom />
       </b-tab>
-      <b-tab title="帳號名稱" disabled />
+      <b-tab title="帳號名稱" v-b-modal.modal-name />
     </b-tabs>
+    <SettingName />
   </b-card>
 </template>
-
-
 
 <style lang="scss">
 .nav-item:nth-child(4) {
@@ -25,16 +24,17 @@
 }
 </style>
 
-
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import ChatRoom from "@/components/ChatRoom.vue";
+import SettingName from "@/components/SettingName.vue";
 
 export default Vue.extend({
   name: "Navigator" as string,
   components: {
-    ChatRoom
-  }
+    ChatRoom,
+    SettingName,
+  },
 });
 </script>
