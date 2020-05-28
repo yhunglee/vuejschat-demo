@@ -61,4 +61,13 @@ export default class Msg extends Vue {
     return simpleTime;
   }
 }
+export type MsgType = {
+  author: string;
+  authorId: string;
+  msgId: string;
+  color: string;
+  createdAt: Date;
+  content: string;
+  isMe: boolean;
+};
 </script>
