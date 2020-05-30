@@ -128,7 +128,7 @@
 // import Vue from "vue";
 import { Vue, Component } from "vue-property-decorator";
 import MsgList from "@/components/MsgList.vue";
-import { db } from "@/db";
+import { db, Timestamp } from "@/db";
 import { MsgType } from "./Msg.vue";
 import { v4 as uuidv4 } from "uuid";
 
@@ -152,6 +152,37 @@ export default class ChatRoom extends Vue {
     };
   }
 
+  public mounted() {
+    this.firestore.msgList
+      .orderBy("createdAt", "asc")
+      .limitToLast(10)
+      .onSnapshot((snapshot) => {
+        const rawMsgs = snapshot.docs.map((doc) => doc.data());
+        rawMsgs.forEach((rawMsg) => {
+          // 每一個遠端訊息需要尋找是否已存在畫面訊息列表
+          const msgIsExistingList = this.msgList.findIndex((element) => {
+            return element["msgId"] === rawMsg["msgId"];
+          });
+
+          if (msgIsExistingList === -1) {
+            // 當遠端訊息沒有存在畫面訊息列表時，增加到畫面的訊息列表
+            this.msgList.push({
+              author: rawMsg["author"],
+              authorId: rawMsg["authorId"],
+              msgId: rawMsg["msgId"],
+              color: "",
+              createdAt: rawMsg["createdAt"].toDate(),
+              content: rawMsg["content"],
+              isMe:
+                rawMsg["authorId"] === localStorage.getItem("nickname_uuid")
+                  ? true
+                  : false,
+            });
+          }
+        });
+      });
+  }
+
   sendMessage(event: Event | KeyboardEvent) {
     // console.log(
     //   `event.target.value: ${JSON.stringify(
@@ -170,7 +201,7 @@ export default class ChatRoom extends Vue {
       msgId: uuidv4(),
       color: "#acd",
       content: (event.target as HTMLTextAreaElement).value,
-      isMe: true,
+      createdAt: Timestamp.fromDate(new Date()),
     });
 
     // clean value of textarea
