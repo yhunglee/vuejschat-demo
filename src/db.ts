@@ -4,7 +4,7 @@ import { firebaseConfig } from "@/utility/firebase-config";
 
 firebase.initializeApp({
   projectId: firebaseConfig.projectId,
-  databaseURL: firebaseConfig.databaseURL,
+  databaseURL: firebaseConfig.databaseURL
 });
 // firebase.firestore().settings({ timestampsInSnapshots: true });
 
