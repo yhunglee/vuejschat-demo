@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="notice-area"></div>
-    <MsgList
+    <!-- <MsgList
       v-bind:msgList="[
         {
           author: 'hello',
@@ -32,7 +32,8 @@
           isMe: false,
         },
       ]"
-    />
+    /> -->
+    <MsgList v-bind:msgList="msgList" />
     <div class="input-area">
       <div class="action pic">
         <button>
@@ -58,13 +59,16 @@
       </div>
 
       <div class="txt msg-input">
-        <textarea
-          name="msg"
-          id="inputMsg"
-          cols="30"
-          rows="1"
-          autofocus
-        ></textarea>
+        <b-form>
+          <b-textarea
+            name="msg"
+            id="inputMsg"
+            cols="30"
+            rows="1"
+            autofocus
+            @keydown.enter="sendMessage($event)"
+          ></b-textarea>
+        </b-form>
       </div>
 
       <div class="action send-msg">
@@ -124,6 +128,9 @@
 // import Vue from "vue";
 import { Vue, Component } from "vue-property-decorator";
 import MsgList from "@/components/MsgList.vue";
+import { db } from "@/db";
+import { MsgType } from "./Msg.vue";
+import { v4 as uuidv4 } from "uuid";
 
 // export default Vue.extend({
 //   name: "chat-room" as string,
@@ -136,5 +143,40 @@ import MsgList from "@/components/MsgList.vue";
   components: { MsgList },
   props: [],
 })
-export default class ChatRoom extends Vue {}
+export default class ChatRoom extends Vue {
+  public msgList: Array<MsgType> = [];
+
+  get firestore() {
+    return {
+      msgList: db.collection("msgList"),
+    };
+  }
+
+  sendMessage(event: Event | KeyboardEvent) {
+    // console.log(
+    //   `event.target.value: ${JSON.stringify(
+    //     (event.target as HTMLTextAreaElement).value
+    //   )}`
+    // ); // debug
+
+    if ((event as KeyboardEvent).shiftKey) {
+      // console.log(`shiftkey!!`); //debug
+      return false;
+    }
+
+    this.firestore.msgList.add({
+      author: localStorage.getItem("nickname"),
+      authorId: localStorage.getItem("nickname_uuid"),
+      msgId: uuidv4(),
+      color: "#acd",
+      content: (event.target as HTMLTextAreaElement).value,
+      isMe: true,
+    });
+
+    // clean value of textarea
+    (event.target as HTMLTextAreaElement).value = "";
+
+    event.preventDefault();
+  }
+}
 </script>
