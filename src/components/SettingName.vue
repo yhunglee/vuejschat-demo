@@ -32,12 +32,12 @@
 
 <script lang="ts">
 import { Vue, Component, Emit } from "vue-property-decorator";
+import { v4 as uuidv4 } from "uuid";
 
 @Component({})
 export default class SettingName extends Vue {
-  // TODO: find name and uuid for displaying and checking.
-
   private nickname = "";
+  private nicknameUUID = "";
 
   get validNickname(): boolean {
     return this.nickname.length >= 3 ? true : false;
@@ -45,13 +45,18 @@ export default class SettingName extends Vue {
 
   mounted() {
     this.nickname = localStorage.getItem("nickname") || "";
+    this.nicknameUUID = localStorage.getItem("nickname_uuid") || "";
   }
 
   @Emit()
   saveNickname(bvmodalEvt: Event) {
     localStorage.setItem("nickname", this.nickname);
+    if (
+      this.nicknameUUID === "" ||
+      localStorage.getItem("nickname_uuid") === null
+    ) {
+      localStorage.setItem("nickname_uuid", uuidv4());
+    }
   }
-
-  // TODO: setting nickname id to localstorage
 }
 </script>
