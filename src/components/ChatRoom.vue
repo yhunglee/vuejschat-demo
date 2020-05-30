@@ -66,13 +66,13 @@
             cols="30"
             rows="1"
             autofocus
-            @keydown.enter="sendMessage($event)"
+            @keydown.enter="sendMessage"
           ></b-textarea>
         </b-form>
       </div>
 
       <div class="action send-msg">
-        <button>
+        <button @click="sendMessage">
           <b-icon-arrow-right></b-icon-arrow-right>
         </button>
       </div>
@@ -191,7 +191,14 @@ export default class ChatRoom extends Vue {
     // ); // debug
 
     if ((event as KeyboardEvent).shiftKey) {
-      // console.log(`shiftkey!!`); //debug
+      return false;
+    }
+
+    // 選擇輸入欄元素
+    const element = document.getElementById("inputMsg") as HTMLTextAreaElement;
+    // 當輸入欄位空值時不傳訊息
+    if (element.value.length < 1 || element.value.trim() === "") {
+      event.preventDefault();
       return false;
     }
 
@@ -199,13 +206,12 @@ export default class ChatRoom extends Vue {
       author: localStorage.getItem("nickname"),
       authorId: localStorage.getItem("nickname_uuid"),
       msgId: uuidv4(),
-      color: "#acd",
-      content: (event.target as HTMLTextAreaElement).value,
+      content: element.value,
       createdAt: Timestamp.fromDate(new Date()),
     });
 
     // clean value of textarea
-    (event.target as HTMLTextAreaElement).value = "";
+    element.value = "";
 
     event.preventDefault();
   }
