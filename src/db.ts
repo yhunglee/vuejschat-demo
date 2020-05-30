@@ -9,3 +9,6 @@ firebase.initializeApp({
 // firebase.firestore().settings({ timestampsInSnapshots: true });
 
 export const db = firebase.firestore();
+
+const { Timestamp, GeoPoint } = firebase.firestore;
+export { Timestamp, GeoPoint };
