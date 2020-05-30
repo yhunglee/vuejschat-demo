@@ -6,9 +6,12 @@
       <b-tab title="偷偷說">
         <ChatRoom />
       </b-tab>
-      <b-tab title="帳號名稱" v-b-modal.modal-name />
+
+      <b-tab :title="accountName()">
+        <b-button v-b-modal.modal-name>設定暱稱</b-button>
+        <SettingName />
+      </b-tab>
     </b-tabs>
-    <SettingName />
   </b-card>
 </template>
 
@@ -25,16 +28,20 @@
 </style>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop } from "vue-property-decorator";
 import ChatRoom from "@/components/ChatRoom.vue";
 import SettingName from "@/components/SettingName.vue";
 
-export default Vue.extend({
-  name: "Navigator" as string,
+@Component({
   components: {
     ChatRoom,
     SettingName,
   },
-});
+})
+export default class Navigator extends Vue {
+  public accountName(): string {
+    // console.log(`Navigator: ${localStorage.getItem("nickname")}`); // debug
+    return localStorage.getItem("nickname") || "帳號資料";
+  }
+}
 </script>
