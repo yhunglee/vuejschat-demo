@@ -19,7 +19,7 @@ Vue.use(firestorePlugin);
 new Vue({
   router,
   store,
-  render: (h) => h(App),
+  render: h => h(App)
 }).$mount("#app");
 
 Vue.component("chatRoom", import("@/components/ChatRoom.vue"));
