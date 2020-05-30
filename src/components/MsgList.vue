@@ -1,5 +1,5 @@
 <template>
-  <div class="msg-list">
+  <div class="msg-list" ref="msgList">
     <Msg v-for="msg in msgList" v-bind:msg="msg" v-bind:key="msg.msgId" />
     <!-- <Msg
       v-bind:msg="{
@@ -63,5 +63,15 @@ import { MsgType } from "@/components/Msg.vue";
 })
 export default class MsgList extends Vue {
   // @Prop() readonly msgList: Array<MsgType> = [];
+
+  public updated() {
+    this.$nextTick(() => {
+      // 選擇訊息清單欄元素
+      const element: any = this.$refs.msgList;
+
+      // 當訊息清單更新後，捲到最底部，能夠立刻看到新訊息
+      element.scrollTop = element.scrollHeight;
+    });
+  }
 }
 </script>
