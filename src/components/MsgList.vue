@@ -46,9 +46,9 @@
 
 <script lang="ts">
 // import Vue from "vue";
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component } from "vue-property-decorator";
 import Msg from "@/components/Msg.vue";
-import { MsgType } from "@/components/Msg.vue";
+// import { MsgType } from "@/components/Msg.vue";
 
 // export default Vue.extend({
 //   name: "msg-list" as string,
@@ -59,7 +59,7 @@ import { MsgType } from "@/components/Msg.vue";
 
 @Component({
   components: { Msg },
-  props: ["msgList"],
+  props: ["msgList"]
 })
 export default class MsgList extends Vue {
   // @Prop() readonly msgList: Array<MsgType> = [];
@@ -67,7 +67,7 @@ export default class MsgList extends Vue {
   public updated() {
     this.$nextTick(() => {
       // 選擇訊息清單欄元素
-      const element: any = this.$refs.msgList;
+      const element = this.$refs.msgList as HTMLDivElement;
 
       // 當訊息清單更新後，捲到最底部，能夠立刻看到新訊息
       element.scrollTop = element.scrollHeight;
