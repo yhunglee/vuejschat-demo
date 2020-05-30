@@ -46,7 +46,7 @@ import { Vue, Component, Prop } from "vue-property-decorator";
 
 @Component({
   components: {},
-  props: ["msg"],
+  props: ["msg"]
 })
 export default class Msg extends Vue {
   @Prop() readonly msg!: object;
