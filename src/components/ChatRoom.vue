@@ -141,14 +141,14 @@ import { v4 as uuidv4 } from "uuid";
 
 @Component({
   components: { MsgList },
-  props: [],
+  props: []
 })
 export default class ChatRoom extends Vue {
   public msgList: Array<MsgType> = [];
 
   get firestore() {
     return {
-      msgList: db.collection("msgList"),
+      msgList: db.collection("msgList")
     };
   }
 
@@ -156,11 +156,11 @@ export default class ChatRoom extends Vue {
     this.firestore.msgList
       .orderBy("createdAt", "asc")
       .limitToLast(10)
-      .onSnapshot((snapshot) => {
-        const rawMsgs = snapshot.docs.map((doc) => doc.data());
-        rawMsgs.forEach((rawMsg) => {
+      .onSnapshot(snapshot => {
+        const rawMsgs = snapshot.docs.map(doc => doc.data());
+        rawMsgs.forEach(rawMsg => {
           // 每一個遠端訊息需要尋找是否已存在畫面訊息列表
-          const msgIsExistingList = this.msgList.findIndex((element) => {
+          const msgIsExistingList = this.msgList.findIndex(element => {
             return element["msgId"] === rawMsg["msgId"];
           });
 
@@ -176,7 +176,7 @@ export default class ChatRoom extends Vue {
               isMe:
                 rawMsg["authorId"] === localStorage.getItem("nickname_uuid")
                   ? true
-                  : false,
+                  : false
             });
           }
         });
@@ -207,7 +207,7 @@ export default class ChatRoom extends Vue {
       authorId: localStorage.getItem("nickname_uuid"),
       msgId: uuidv4(),
       content: element.value,
-      createdAt: Timestamp.fromDate(new Date()),
+      createdAt: Timestamp.fromDate(new Date())
     });
 
     // clean value of textarea
