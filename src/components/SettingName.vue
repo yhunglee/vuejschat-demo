@@ -49,7 +49,7 @@ export default class SettingName extends Vue {
   }
 
   @Emit()
-  saveNickname(bvmodalEvt: Event) {
+  saveNickname() {
     localStorage.setItem("nickname", this.nickname);
     if (
       this.nicknameUUID === "" ||
