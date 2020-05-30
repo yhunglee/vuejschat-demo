@@ -35,8 +35,8 @@ import SettingName from "@/components/SettingName.vue";
 @Component({
   components: {
     ChatRoom,
-    SettingName,
-  },
+    SettingName
+  }
 })
 export default class Navigator extends Vue {
   public accountName(): string {
