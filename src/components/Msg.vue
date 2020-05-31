@@ -1,7 +1,15 @@
 <template>
   <div class="msg-container" v-bind:class="{ isMe: msg.isMe }">
     <div class="author">{{ msg.author }}</div>
-    <div class="msg-content">{{ msg.content }}</div>
+    <div
+      class="msg-content"
+      v-show="msg.contentType === 'text' || msg.contentType === undefined"
+    >
+      {{ msg.content }}
+    </div>
+    <div class="msg-content" v-show="msg.contentType === 'picture'">
+      <img :src="msg.content" />
+    </div>
     <div class="created-at">{{ simplifyTime(msg.createdAt) }}</div>
   </div>
 </template>
@@ -67,7 +75,7 @@ export type MsgType = {
   msgId: string;
   color: string; // TODO: plan to do CSS-in-JS for border color to others
   createdAt: Date;
-  // contentType: string; // TODO: text or picture
+  contentType: string; // TODO: text or picture
   content: string;
   isMe: boolean;
 };
