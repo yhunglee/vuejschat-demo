@@ -5,7 +5,11 @@
         >最近是武漢肺炎疫情期間，請做好健康自主管理</b-alert
       >
     </div>
-    <MsgList v-bind:msgList="msgList" />
+    <MsgList
+      v-bind:msgList="msgList"
+      v-bind:uploading="uploadingImgFile"
+      v-bind:progress="uploadingProgress"
+    />
     <div class="input-area">
       <div class="action pic">
         <button>
@@ -56,6 +60,7 @@
         src="@/assets/SmartSelect_20200531-111510.jpg"
         alt=""
         width="200"
+        @click="sendEmoji"
       />
       <img
         class="item"
@@ -63,6 +68,7 @@
         alt=""
         srcset=""
         width="200"
+        @click="sendEmoji"
       />
     </div>
   </div>
@@ -123,7 +129,7 @@
 // import Vue from "vue";
 import { Vue, Component } from "vue-property-decorator";
 import MsgList from "@/components/MsgList.vue";
-import { db, Timestamp } from "@/db";
+import { db, Timestamp, storage } from "@/db";
 import { MsgType } from "./Msg.vue";
 import { v4 as uuidv4 } from "uuid";
 
@@ -143,9 +149,21 @@ export default class ChatRoom extends Vue {
 
   private showEmojiListing = false;
 
+  private uploadingImgFile = false;
+  private uploadingProgress = 0;
+
   get firestore() {
+    // notice: use vue-fire package
     return {
-      msgList: db.collection("msgList")
+      msgList: db.collection("msgList"),
+      bugList: db.collection("bug")
+    };
+  }
+
+  get firestorage() {
+    // notice: no use other 3rd party packages.
+    return {
+      imgList: storage.ref("/images/")
     };
   }
 
@@ -169,6 +187,11 @@ export default class ChatRoom extends Vue {
               msgId: rawMsg["msgId"],
               color: "",
               createdAt: rawMsg["createdAt"].toDate(),
+              contentType:
+                rawMsg["contentType"] === undefined ||
+                rawMsg["contentType"] === "text"
+                  ? "text"
+                  : "picture",
               content: rawMsg["content"],
               isMe:
                 rawMsg["authorId"] === localStorage.getItem("nickname_uuid")
@@ -203,6 +226,7 @@ export default class ChatRoom extends Vue {
       author: localStorage.getItem("nickname"),
       authorId: localStorage.getItem("nickname_uuid"),
       msgId: uuidv4(),
+      contentType: "text",
       content: element.value,
       createdAt: Timestamp.fromDate(new Date())
     });
@@ -225,6 +249,66 @@ export default class ChatRoom extends Vue {
         block: this.showEmojiListing === true ? "end" : "start"
       });
     });
+  }
+
+  sendImage() {
+    // this.firestorage.imgList
+    //   .child(`${rawFilename!}_${Math.floor(Date.now() / 1000)}`)
+    //   .put(rawFileElement, { contentType: "image/*" });
+    return "";
+  }
+  sendEmoji(event: Event) {
+    const rawFileElement = (event.target as HTMLImageElement).src;
+    const rawFilename = (event.target as HTMLImageElement).src.split("/").pop();
+
+    // console.log(`rawFilename: ${rawFilename}`);
+
+    fetch(rawFileElement)
+      .then(res => res.blob())
+      .then(blob => {
+        const uploadTask = this.firestorage.imgList
+          .child(`${rawFilename!}_${Math.floor(Date.now() / 1000)}`)
+          .put(blob, { contentType: "image/*" });
+
+        uploadTask.on(
+          `state_changed`,
+          snapshot => {
+            this.uploadingProgress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            if (this.uploadingProgress < 100) {
+              this.uploadingImgFile = true;
+            }
+          },
+          error => {
+            // 上傳圖片的錯誤處理
+            this.firestore.bugList.add({
+              author: localStorage.getItem("nickname"),
+              authorId: localStorage.getItem("nickname_uuid"),
+              msgId: uuidv4(),
+              contentType: "picture",
+              content: error.message,
+              createdAt: Timestamp.fromDate(new Date())
+            });
+          },
+          () => {
+            // 完成上傳的處理
+            this.uploadingProgress = 100;
+            this.uploadingImgFile = false;
+            uploadTask.snapshot.ref.getDownloadURL().then(url => {
+              this.firestore.msgList.add({
+                author: localStorage.getItem("nickname"),
+                authorId: localStorage.getItem("nickname_uuid"),
+                msgId: uuidv4(),
+                contentType: "picture",
+                content: url,
+                createdAt: Timestamp.fromDate(new Date())
+              });
+            });
+          }
+        );
+      });
+
+    // return "";
   }
 }
 </script>
