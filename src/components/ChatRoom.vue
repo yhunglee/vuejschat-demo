@@ -20,6 +20,7 @@
               id="imgFile"
               accept="image/*"
               hidden
+              @change="sendImage"
             />
             <b-icon-image></b-icon-image>
           </label>
@@ -251,64 +252,83 @@ export default class ChatRoom extends Vue {
     });
   }
 
-  sendImage() {
-    // this.firestorage.imgList
-    //   .child(`${rawFilename!}_${Math.floor(Date.now() / 1000)}`)
-    //   .put(rawFileElement, { contentType: "image/*" });
-    return "";
+  sendImage(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (
+      target === null ||
+      target.files === null ||
+      target.files === undefined
+    ) {
+      // 沒選取檔案則不處理上傳
+      return false;
+    }
+
+    // 開始處理上傳資料
+    const rawFileElement = ((event.target as HTMLInputElement)
+      .files as FileList)[0];
+    const rawFilename = rawFileElement.name;
+    this._sendImageFile(rawFileElement, rawFilename);
   }
+
+  // 發送圖檔到 firebase storage
+  private _sendImageFile(
+    rawFileElement: File | Blob,
+    rawFilename: string | undefined
+  ) {
+    const uploadTask = this.firestorage.imgList
+      .child(`${rawFilename}_${Math.floor(Date.now() / 1000)}`)
+      .put(rawFileElement, {
+        contentType: "image/*"
+      });
+
+    uploadTask.on(
+      `state_changed`,
+      snapshot => {
+        this.uploadingProgress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+        if (this.uploadingProgress < 100) {
+          this.uploadingImgFile = true;
+        }
+      },
+      error => {
+        // 上傳圖片的錯誤處理
+        this.firestore.bugList.add({
+          author: localStorage.getItem("nickname"),
+          authorId: localStorage.getItem("nickname_uuid"),
+          msgId: uuidv4(),
+          contentType: "picture",
+          content: error.message,
+          createdAt: Timestamp.fromDate(new Date())
+        });
+      },
+      () => {
+        // 完成上傳的處理
+        this.uploadingProgress = 100;
+        this.uploadingImgFile = false;
+        uploadTask.snapshot.ref.getDownloadURL().then(url => {
+          this.firestore.msgList.add({
+            author: localStorage.getItem("nickname"),
+            authorId: localStorage.getItem("nickname_uuid"),
+            msgId: uuidv4(),
+            contentType: "picture",
+            content: url,
+            createdAt: Timestamp.fromDate(new Date())
+          });
+        });
+      }
+    );
+  }
+
   sendEmoji(event: Event) {
     const rawFileElement = (event.target as HTMLImageElement).src;
     const rawFilename = (event.target as HTMLImageElement).src.split("/").pop();
 
-    // console.log(`rawFilename: ${rawFilename}`);
-
     fetch(rawFileElement)
       .then(res => res.blob())
       .then(blob => {
-        const uploadTask = this.firestorage.imgList
-          .child(`${rawFilename}_${Math.floor(Date.now() / 1000)}`)
-          .put(blob, { contentType: "image/*" });
-
-        uploadTask.on(
-          `state_changed`,
-          snapshot => {
-            this.uploadingProgress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            if (this.uploadingProgress < 100) {
-              this.uploadingImgFile = true;
-            }
-          },
-          error => {
-            // 上傳圖片的錯誤處理
-            this.firestore.bugList.add({
-              author: localStorage.getItem("nickname"),
-              authorId: localStorage.getItem("nickname_uuid"),
-              msgId: uuidv4(),
-              contentType: "picture",
-              content: error.message,
-              createdAt: Timestamp.fromDate(new Date())
-            });
-          },
-          () => {
-            // 完成上傳的處理
-            this.uploadingProgress = 100;
-            this.uploadingImgFile = false;
-            uploadTask.snapshot.ref.getDownloadURL().then(url => {
-              this.firestore.msgList.add({
-                author: localStorage.getItem("nickname"),
-                authorId: localStorage.getItem("nickname_uuid"),
-                msgId: uuidv4(),
-                contentType: "picture",
-                content: url,
-                createdAt: Timestamp.fromDate(new Date())
-              });
-            });
-          }
-        );
+        this._sendImageFile(blob, rawFilename);
       });
-
-    // return "";
   }
 }
 </script>
