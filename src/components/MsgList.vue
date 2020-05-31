@@ -1,6 +1,13 @@
 <template>
   <div class="msg-list" ref="msgList">
     <Msg v-for="msg in msgList" v-bind:msg="msg" v-bind:key="msg.msgId" />
+    <b-progress
+      :value="progress"
+      show-value
+      animated
+      class="uploading-file"
+      v-show="uploading"
+    ></b-progress>
     <!-- <Msg
       v-bind:msg="{
         author: 'hello',
@@ -42,6 +49,13 @@
   overflow: hidden;
   overflow-y: scroll;
 }
+
+.uploading-file {
+  // 上傳圖片時的樣式
+  float: right;
+  width: 30%;
+  margin: 10px 0;
+}
 </style>
 
 <script lang="ts">
@@ -59,10 +73,12 @@ import Msg from "@/components/Msg.vue";
 
 @Component({
   components: { Msg },
-  props: ["msgList"]
+  props: ["msgList", "uploading", "progress"]
 })
 export default class MsgList extends Vue {
   // @Prop() readonly msgList: Array<MsgType> = [];
+  // @Prop() readonly uploading: boolean = false;
+  // @Prop() readonly progress: number = 0;
 
   public updated() {
     this.$nextTick(() => {
