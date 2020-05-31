@@ -267,7 +267,7 @@ export default class ChatRoom extends Vue {
       .then(res => res.blob())
       .then(blob => {
         const uploadTask = this.firestorage.imgList
-          .child(`${rawFilename!}_${Math.floor(Date.now() / 1000)}`)
+          .child(`${rawFilename}_${Math.floor(Date.now() / 1000)}`)
           .put(blob, { contentType: "image/*" });
 
         uploadTask.on(
