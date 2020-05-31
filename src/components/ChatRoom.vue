@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" id="chatroom">
     <div class="notice-area">
       <b-alert show dismissible
         >最近是武漢肺炎疫情期間，請做好健康自主管理</b-alert
@@ -22,8 +22,8 @@
         </button>
       </div>
 
-      <div class="action emoji-list">
-        <button>
+      <div class="action emoji">
+        <button @click="displayEmojiList">
           <label>
             <b-icon-emoji-smile></b-icon-emoji-smile>
           </label>
@@ -48,6 +48,22 @@
           <b-icon-arrow-right></b-icon-arrow-right>
         </button>
       </div>
+    </div>
+
+    <div class="list emoji-listing" v-show="showEmojiListing">
+      <img
+        class="item"
+        src="@/assets/SmartSelect_20200531-111510.jpg"
+        alt=""
+        width="200"
+      />
+      <img
+        class="item"
+        src="@/assets/SmartSelect_20200530-153652.jpg"
+        alt=""
+        srcset=""
+        width="200"
+      />
     </div>
   </div>
 </template>
@@ -79,7 +95,7 @@
       min-width: 10%;
     }
     .txt.msg-input {
-      width: 65%;
+      width: 70%;
       padding: 0px 5px;
       textarea {
         resize: none;
@@ -91,6 +107,13 @@
           outline: none;
         }
       }
+    }
+  }
+  .emoji-listing {
+    display: flex;
+
+    .item {
+      margin: 20px;
     }
   }
 }
@@ -117,6 +140,8 @@ import { v4 as uuidv4 } from "uuid";
 })
 export default class ChatRoom extends Vue {
   public msgList: Array<MsgType> = [];
+
+  private showEmojiListing = false;
 
   get firestore() {
     return {
@@ -186,6 +211,20 @@ export default class ChatRoom extends Vue {
     element.value = "";
 
     event.preventDefault();
+  }
+
+  private displayEmojiList() {
+    this.showEmojiListing = !this.showEmojiListing;
+
+    // 協助瀏覽器移動 div 畫面到最底部和最上面，去展示/隱藏 emoji list
+    this.$nextTick(() => {
+      const element = document.getElementById("chatroom") as HTMLDivElement;
+
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: this.showEmojiListing === true ? "end" : "start"
+      });
+    });
   }
 }
 </script>
