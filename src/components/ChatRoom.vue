@@ -5,38 +5,6 @@
         >最近是武漢肺炎疫情期間，請做好健康自主管理</b-alert
       >
     </div>
-    <!-- <MsgList
-      v-bind:msgList="[
-        {
-          author: 'hello',
-          authorId: '1',
-          msgId: '1',
-          color: '#f00',
-          createdAt: new Date(),
-          content: 'world2',
-          isMe: true,
-        },
-        {
-          author: 'hello',
-          authorId: '1',
-          msgId: '2',
-          color: '#f00',
-          createdAt: new Date(),
-          content:
-            'worldqwerqwersdfjsadfjweorqjpwoerjqwerqweoreqerasdfasdfasldfkasld;fkas;dlfkjas;ldfkjas;ldfkjasdl;feworuqpwoeirupedfqwreqwerqwerqwerqwerqwerqwerqwer',
-          isMe: true,
-        },
-        {
-          author: 'hello1',
-          authorId: '2',
-          msgId: '3',
-          color: '#bf0',
-          createdAt: new Date(),
-          content: 'world1',
-          isMe: false,
-        },
-      ]"
-    /> -->
     <MsgList v-bind:msgList="msgList" />
     <div class="input-area">
       <div class="action pic">
