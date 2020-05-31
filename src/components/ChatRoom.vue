@@ -1,6 +1,10 @@
 <template>
   <div class="container">
-    <div class="notice-area"></div>
+    <div class="notice-area">
+      <b-alert show dismissible
+        >最近是武漢肺炎疫情期間，請做好健康自主管理</b-alert
+      >
+    </div>
     <!-- <MsgList
       v-bind:msgList="[
         {
