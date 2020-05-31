@@ -65,8 +65,9 @@ export type MsgType = {
   author: string;
   authorId: string;
   msgId: string;
-  color: string;
+  color: string; // TODO: plan to do CSS-in-JS for border color to others
   createdAt: Date;
+  // contentType: string; // TODO: text or picture
   content: string;
   isMe: boolean;
 };
