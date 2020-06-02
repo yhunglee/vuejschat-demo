@@ -29,3 +29,8 @@ yarn lint
 ### Customize configuration
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+### Screenshot
+![screnshot1](src/assets/program_interface_screenshot.jpg?raw=true "Chat screenshot")
+![screenshot2](src/assets/program_interface_screenshot2.jpg?raw=true "Chat screenshot2")
