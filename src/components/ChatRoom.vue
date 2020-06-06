@@ -59,15 +59,15 @@
       <img
         class="item"
         src="@/assets/SmartSelect_20200531-111510.jpg"
-        alt=""
+        alt
         width="200"
         @click="sendEmoji"
       />
       <img
         class="item"
         src="@/assets/SmartSelect_20200530-153652.jpg"
-        alt=""
-        srcset=""
+        alt
+        srcset
         width="200"
         @click="sendEmoji"
       />
@@ -195,7 +195,7 @@ export default class ChatRoom extends Vue {
                   : "picture",
               content: rawMsg["content"],
               isMe:
-                rawMsg["authorId"] === localStorage.getItem("nickname_uuid")
+                rawMsg["authorId"] === this.$store.state.accountId
                   ? true
                   : false
             });
@@ -224,8 +224,8 @@ export default class ChatRoom extends Vue {
     }
 
     this.firestore.msgList.add({
-      author: localStorage.getItem("nickname"),
-      authorId: localStorage.getItem("nickname_uuid"),
+      author: this.$store.state.accountName,
+      authorId: this.$store.state.accountId,
       msgId: uuidv4(),
       contentType: "text",
       content: element.value,
@@ -294,8 +294,8 @@ export default class ChatRoom extends Vue {
       error => {
         // 上傳圖片的錯誤處理
         this.firestore.bugList.add({
-          author: localStorage.getItem("nickname"),
-          authorId: localStorage.getItem("nickname_uuid"),
+          author: this.$store.state.accountName,
+          authorId: this.$store.state.accountId,
           msgId: uuidv4(),
           contentType: "picture",
           content: error.message,
@@ -308,8 +308,8 @@ export default class ChatRoom extends Vue {
         this.uploadingImgFile = false;
         uploadTask.snapshot.ref.getDownloadURL().then(url => {
           this.firestore.msgList.add({
-            author: localStorage.getItem("nickname"),
-            authorId: localStorage.getItem("nickname_uuid"),
+            author: this.$store.state.accountName,
+            authorId: this.$store.state.accountId,
             msgId: uuidv4(),
             contentType: "picture",
             content: url,
