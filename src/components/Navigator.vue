@@ -7,7 +7,7 @@
         <ChatRoom />
       </b-tab>
 
-      <b-tab :title="accountName()">
+      <b-tab :title="accountName">
         <b-button v-b-modal.modal-name>設定暱稱</b-button>
         <SettingName />
       </b-tab>
@@ -86,9 +86,8 @@ import SettingName from "@/components/SettingName.vue";
   }
 })
 export default class Navigator extends Vue {
-  public accountName(): string {
-    // console.log(`Navigator: ${localStorage.getItem("nickname")}`); // debug
-    return localStorage.getItem("nickname") || "帳號資料";
+  get accountName() {
+    return this.$store.state.accountName || "帳號資料";
   }
 }
 </script>
