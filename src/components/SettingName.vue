@@ -13,16 +13,13 @@
           :state="validNickname"
           trim
           aria-describedby="nickname-help nickname-feedback"
+        ></b-form-input>
+
+        <b-form-invalid-feedback id="nickname-feedback"
+          >至少3個字</b-form-invalid-feedback
         >
-        </b-form-input>
 
-        <b-form-invalid-feedback id="nickname-feedback">
-          至少3個字
-        </b-form-invalid-feedback>
-
-        <b-form-text id="nickname-help">
-          請輸入暱稱
-        </b-form-text>
+        <b-form-text id="nickname-help">請輸入暱稱</b-form-text>
       </b-col>
     </b-row>
   </b-modal>
@@ -32,31 +29,37 @@
 
 <script lang="ts">
 import { Vue, Component, Emit } from "vue-property-decorator";
-import { v4 as uuidv4 } from "uuid";
 
 @Component({})
 export default class SettingName extends Vue {
-  private nickname = "";
-  private nicknameUUID = "";
+  private tmpNickname = this.$store.state.accountName;
+
+  set nickname(name: string) {
+    this.tmpNickname = name;
+  }
+  get nickname() {
+    return this.tmpNickname;
+  }
+
+  set nicknameUUID(id: string) {
+    this.$store.dispatch("modifyAccountId", id);
+  }
+  get nicknameUUID() {
+    return this.$store.state.accountId;
+  }
 
   get validNickname(): boolean {
     return this.nickname.length >= 3 ? true : false;
   }
 
   mounted() {
-    this.nickname = localStorage.getItem("nickname") || "";
-    this.nicknameUUID = localStorage.getItem("nickname_uuid") || "";
+    return this.$store.dispatch("readAccountSetting");
   }
 
   @Emit()
   saveNickname() {
-    localStorage.setItem("nickname", this.nickname);
-    if (
-      this.nicknameUUID === "" ||
-      localStorage.getItem("nickname_uuid") === null
-    ) {
-      localStorage.setItem("nickname_uuid", uuidv4());
-    }
+    this.$store.dispatch("modifyAccountName", this.nickname);
+    this.$store.dispatch("modifyAccountId", this.nicknameUUID);
   }
 }
 </script>
